@@ -52,7 +52,7 @@ namespace MetroFramework.Native
         public TaskbarPosition Position
         {
             get { return position; }
-            private set { position = value; }
+            set { position = value; }
         }
 
         public Point Location

@@ -36,7 +36,7 @@ namespace MetroFramework.Demo
 
         private void metroButton1_Click(object sender, EventArgs e)
         {
-            MetroTaskWindow.ShowTaskWindow(this,"SubControl in TaskWindow", new TaskWindowControl(), 10);
+            MetroTaskWindow.ShowTaskWindow(this,"SubControl in TaskWindow", new TaskWindowControl(), 3,"Right");
         }
 
         private void metroButton2_Click(object sender, EventArgs e)

@@ -38,8 +38,9 @@ namespace MetroFramework.Forms
     public sealed class MetroTaskWindow : MetroForm
     {
         private static MetroTaskWindow singletonWindow;
-        public static void ShowTaskWindow(IWin32Window parent, string title, Control userControl, int secToClose)
+        public static void ShowTaskWindow(IWin32Window parent, string title, Control userControl, int secToClose, string position)
         {
+            m_position = position;
             if (singletonWindow != null)
             {
                 singletonWindow.Close();
@@ -49,9 +50,10 @@ namespace MetroFramework.Forms
 
             singletonWindow = new MetroTaskWindow(secToClose, userControl);
             singletonWindow.Text = title;
+            
             singletonWindow.Resizable = false;
             singletonWindow.Movable = true;
-            singletonWindow.StartPosition = FormStartPosition.Manual;
+            singletonWindow.StartPosition = FormStartPosition.CenterParent;
             
             if (parent != null && parent is IMetroForm)
             {
@@ -68,9 +70,18 @@ namespace MetroFramework.Forms
             return (singletonWindow != null && singletonWindow.Visible);
         }
 
+        public static void ShowTaskWindow(IWin32Window parent, string text, Control userControl, int secToClose)
+        {
+            ShowTaskWindow(parent, text, userControl, secToClose, null);
+        }
+
         public static void ShowTaskWindow(IWin32Window parent, string text, Control userControl)
         {
             ShowTaskWindow(parent, text, userControl, 0);
+        }
+        public static void ShowTaskWindow(string text, Control userControl, int secToClose, string position)
+        {
+            ShowTaskWindow(null, text, userControl, secToClose, position);
         }
 
         public static void ShowTaskWindow(string text, Control userControl, int secToClose)
@@ -133,6 +144,7 @@ namespace MetroFramework.Forms
 
 
         private bool isInitialized = false;
+        static string m_position = null;
         protected override void OnActivated(EventArgs e)
         {
             if (!isInitialized)
@@ -150,6 +162,28 @@ namespace MetroFramework.Forms
                 Size = new Size(400, 200);
 
                 Taskbar myTaskbar = new Taskbar();
+                switch (m_position)
+                {
+                    case "Left":
+                        myTaskbar.Position = TaskbarPosition.Left;
+                        break;
+                    case "Top":
+                        myTaskbar.Position = TaskbarPosition.Top;
+                        break;
+                    case "Right":
+                        myTaskbar.Position = TaskbarPosition.Right;
+                        break;
+                    case "Bottom":
+                        myTaskbar.Position = TaskbarPosition.Bottom;
+                        break;
+                    case "Unknown":
+                        myTaskbar.Position = TaskbarPosition.Unknown;
+                        break;
+                }
+                if (m_position == null)
+                {
+                    myTaskbar.Position = TaskbarPosition.Unknown;
+                }
                 switch (myTaskbar.Position)
                 {
                     case TaskbarPosition.Left:
@@ -158,15 +192,16 @@ namespace MetroFramework.Forms
                     case TaskbarPosition.Top:
                         Location = new Point(myTaskbar.Bounds.Width - Width - 5, myTaskbar.Bounds.Height + 5);
                         break;
-                    case TaskbarPosition.Right:
+                    case TaskbarPosition.Right:                        
                         Location = new Point(myTaskbar.Bounds.X - Width - 5, myTaskbar.Bounds.Height - Height - 5);
                         break;
                     case TaskbarPosition.Bottom:
                         Location = new Point(myTaskbar.Bounds.Width - Width - 5, myTaskbar.Bounds.Y - Height - 5);
                         break;
                     case TaskbarPosition.Unknown:
-                    default:
-                        Location = new Point(Screen.PrimaryScreen.Bounds.Width - Width - 5, Screen.PrimaryScreen.Bounds.Height - Height - 5);
+                        //Location = new Point(Screen.PrimaryScreen.Bounds.Width - Width - 5, Screen.PrimaryScreen.Bounds.Height - Height - 5);
+                        break;
+                    default:                        
                         break;
                 }
 
